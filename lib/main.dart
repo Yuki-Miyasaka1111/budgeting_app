@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'input_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -8,19 +9,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('家計簿アプリ')),
-        body: MyHomePage(),
+      title: '家計簿アプリ',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: MyHomePage(),
     );
   }
-}
-
-class Expense {
-  final String title;
-  final int amount;
-
-  Expense({required this.title, required this.amount});
 }
 
 class MyHomePage extends StatefulWidget {
@@ -29,99 +24,52 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Expense> expenses = [];
+  int _selectedIndex = 0;
 
-  void _addExpense(String title, int amount) {
+  static List<Widget> _widgetOptions = <Widget>[
+    InputPage(),
+    Text('カレンダーページ'),
+    Text('グラフページ'),
+    Text('設定ページ'),
+  ];
+
+  void _onItemTapped(int index) {
     setState(() {
-      expenses.add(Expense(title: title, amount: amount));
+      _selectedIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(child: ExpenseList(expenses: expenses)),
-        AddExpense(onAddExpense: _addExpense),
-      ],
-    );
-  }
-}
-
-class ExpenseList extends StatelessWidget {
-  final List<Expense> expenses;
-
-  ExpenseList({required this.expenses});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: expenses.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(expenses[index].title),
-          trailing: Text('${expenses[index].amount}円'),
-        );
-      },
-    );
-  }
-}
-
-class AddExpense extends StatefulWidget {
-  final Function(String, int) onAddExpense;
-
-  AddExpense({required this.onAddExpense});
-
-  @override
-  _AddExpenseState createState() => _AddExpenseState();
-}
-
-class _AddExpenseState extends State<AddExpense> {
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: 'タイトル'),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('家計簿アプリ'),
+      ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.input),
+            label: '入力',
           ),
-          SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              controller: amountController,
-              decoration: InputDecoration(labelText: '金額'),
-              keyboardType: TextInputType.number,
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'カレンダー',
           ),
-          SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {
-              final title = titleController.text;
-              final amount = int.tryParse(amountController.text) ?? 0;
-              if (title.isNotEmpty && amount > 0) {
-                widget.onAddExpense(title, amount);
-                titleController.clear();
-                amountController.clear();
-              }
-            },
-            child: Text('追加'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pie_chart),
+            label: 'グラフ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: '設定',
           ),
         ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    amountController.dispose();
-    super.dispose();
   }
 }
