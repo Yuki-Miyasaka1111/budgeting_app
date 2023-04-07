@@ -28,6 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static List<Widget> _widgetOptions = <Widget>[
     InputPage(),
+    Text('残高ページ'),
     Text('カレンダーページ'),
     Text('グラフページ'),
     Text('設定ページ'),
@@ -42,9 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('家計簿アプリ'),
-      ),
+      
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -53,6 +52,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.input),
             label: '入力',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.wallet),
+            label: '残高',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
@@ -69,6 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        unselectedItemColor: Colors.grey, // 未選択アイコンの色
+        selectedItemColor: Colors.black, // 選択されたアイコンの色
       ),
     );
   }
